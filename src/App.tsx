@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import type { PageContent } from "./interfaces";
 import { loadQuestJSON } from "./utils";
+import { FORM_MESSAGES } from "./constants";
 
 function App() {
   const [content, setContent] = useState<PageContent[]>([]);
@@ -30,7 +31,7 @@ function App() {
         setError(
           error instanceof Error
             ? error.message
-            : "Неизвестная ошибка при загрузке данных"
+            : "Unknown error while loading data"
         );
       } finally {
         setLoading(false);
@@ -48,7 +49,7 @@ function App() {
       formData.get("answer")?.toString().trim().toLowerCase() ?? "";
 
     if (!normalizedAnswer) {
-      setInputError("Ну напиши хоть что-нибудь!");
+      setInputError(FORM_MESSAGES.emptyInput);
       return;
     }
 
@@ -67,7 +68,7 @@ function App() {
         );
         setInputError(current.errorMessages[randomIndex]);
       } else {
-        setInputError("Неверный ответ");
+        setInputError(FORM_MESSAGES.defaultIncorrectAnswer);
       }
     }
   };
@@ -96,7 +97,7 @@ function App() {
                   onChange={() => {
                     if (inputError) setInputError(null);
                   }}
-                  placeholder="Ваша догадка"
+                  placeholder={FORM_MESSAGES.inputPlaceholder}
                 />
                 <Field.ErrorText textStyle="lg">{inputError}</Field.ErrorText>
               </Field.Root>
