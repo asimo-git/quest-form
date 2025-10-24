@@ -19,7 +19,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [answer, setAnswer] = useState("");
   const [inputError, setInputError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,31 +40,34 @@ function App() {
     loadQuest();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const current = content[step];
+    const formData = new FormData(e.currentTarget);
+    const normalizedAnswer =
+      formData.get("answer")?.toString().trim().toLowerCase() ?? "";
 
-    if (!current.solution) {
+    if (!normalizedAnswer) {
+      setInputError("Ну напиши хоть что-нибудь!");
+      return;
+    }
+
+    const isCorrect = current?.solution?.some(
+      (s) => s.trim().toLowerCase() === normalizedAnswer
+    );
+
+    if (isCorrect) {
       setStep((prev) => (prev < content.length - 1 ? prev + 1 : prev));
+      e.currentTarget.reset();
+      setInputError(null);
     } else {
-      const normalizedAnswer = answer.trim().toLowerCase();
-      const isCorrect = current.solution.some(
-        (s) => s.trim().toLowerCase() === normalizedAnswer
-      );
-
-      if (isCorrect) {
-        setStep((prev) => (prev < content.length - 1 ? prev + 1 : prev));
-        setAnswer("");
-        setInputError(null);
+      if (current.errorMessages && current.errorMessages.length > 0) {
+        const randomIndex = Math.floor(
+          Math.random() * current.errorMessages.length
+        );
+        setInputError(current.errorMessages[randomIndex]);
       } else {
-        if (current.errorMessages && current.errorMessages.length > 0) {
-          const randomIndex = Math.floor(
-            Math.random() * current.errorMessages.length
-          );
-          setInputError(current.errorMessages[randomIndex]);
-        } else {
-          setInputError("Неверный ответ");
-        }
+        setInputError("Неверный ответ");
       }
     }
   };
@@ -90,9 +92,8 @@ function App() {
               <Field.Root invalid={!!inputError}>
                 <Input
                   size="lg"
-                  value={answer}
-                  onChange={(e) => {
-                    setAnswer(e.target.value);
+                  name="answer"
+                  onChange={() => {
                     if (inputError) setInputError(null);
                   }}
                   placeholder="Ваша догадка"
@@ -121,7 +122,11 @@ function App() {
                 variant="subtle"
                 size="lg"
                 maxW="300px"
-                onClick={(e) => handleSubmit(e)}
+                onClick={() =>
+                  setStep((prev) =>
+                    prev < content.length - 1 ? prev + 1 : prev
+                  )
+                }
               >
                 {content[step].buttonText}
               </Button>
