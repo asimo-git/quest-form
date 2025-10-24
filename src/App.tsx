@@ -11,12 +11,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import type { PageContent } from "./interfaces";
-import { loadQuestJSON } from "./utils";
+import { getStepFromLS, loadQuestJSON } from "./utils";
 import { FORM_MESSAGES } from "./constants";
 
 function App() {
   const [content, setContent] = useState<PageContent[]>([]);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(getStepFromLS());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +41,10 @@ function App() {
     loadQuest();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("questStep", String(step));
+  }, [step]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const current = content[step];
@@ -58,7 +62,7 @@ function App() {
     );
 
     if (isCorrect) {
-      setStep((prev) => (prev < content.length - 1 ? prev + 1 : prev));
+      setStep((prev) => (prev < content.length - 1 ? prev + 1 : 0));
       e.currentTarget.reset();
       setInputError(null);
     } else {
@@ -80,7 +84,7 @@ function App() {
       </Center>
     );
 
-  if (error) return <p style={{ color: "red" }}>Ошибка: {error}</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <>
@@ -124,9 +128,7 @@ function App() {
                 size="lg"
                 maxW="300px"
                 onClick={() =>
-                  setStep((prev) =>
-                    prev < content.length - 1 ? prev + 1 : prev
-                  )
+                  setStep((prev) => (prev < content.length - 1 ? prev + 1 : 0))
                 }
               >
                 {content[step].buttonText}

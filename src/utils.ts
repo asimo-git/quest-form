@@ -23,3 +23,16 @@ export async function loadQuestJSON(): Promise<PageContent[]> {
 
   return data;
 }
+
+export function getStepFromLS() {
+  const savedStep = localStorage.getItem("questStep");
+
+  if (savedStep) {
+    const parsedStep = parseInt(savedStep, 10);
+    if (!isNaN(parsedStep) && parsedStep >= 0) {
+      return parsedStep;
+    }
+  }
+
+  return 0;
+}
