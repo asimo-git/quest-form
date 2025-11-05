@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import {
-  Button,
   Center,
   Field,
   Heading,
@@ -13,6 +12,8 @@ import {
 import type { PageContent } from "./interfaces";
 import { getStepFromLS, loadQuestJSON } from "./utils";
 import { FORM_MESSAGES } from "./constants";
+import { SlideFade } from "@chakra-ui/transition";
+import { GlowButton } from "./components/GlowButton";
 
 function App() {
   const [content, setContent] = useState<PageContent[]>([]);
@@ -88,55 +89,56 @@ function App() {
 
   return (
     <>
-      <VStack gap="3" align="stretch" maxW="600px">
-        <Heading size="2xl">{content[step].title}</Heading>
-        <Text textStyle="2xl">{content[step].text}</Text>
-        {content[step].solution ? (
-          <form onSubmit={handleSubmit}>
-            <VStack gap="4" align="stretch">
-              <Field.Root invalid={!!inputError}>
-                <Input
-                  size="lg"
-                  name="answer"
-                  onChange={() => {
-                    if (inputError) setInputError(null);
-                  }}
-                  placeholder={FORM_MESSAGES.inputPlaceholder}
-                />
-                <Field.ErrorText textStyle="lg">{inputError}</Field.ErrorText>
-              </Field.Root>
+      <SlideFade key={step} in reverse transition={{ enter: { duration: 1 } }}>
+        <VStack gap="3" align="stretch" maxW="600px">
+          <Heading size="2xl">{content[step].title}</Heading>
+          <Text textStyle="2xl">{content[step].text}</Text>
+          {content[step].solution ? (
+            <form onSubmit={handleSubmit}>
+              <VStack gap="4" align="stretch">
+                <Field.Root invalid={!!inputError}>
+                  <Input
+                    size="lg"
+                    name="answer"
+                    onChange={() => {
+                      if (inputError) setInputError(null);
+                    }}
+                    placeholder={FORM_MESSAGES.inputPlaceholder}
+                  />
+                  <Field.ErrorText textStyle="lg">{inputError}</Field.ErrorText>
+                </Field.Root>
 
-              {content[step].buttonText ? (
-                <Button type="submit" rounded="full" variant="subtle" size="lg">
-                  {content[step].buttonText}
-                </Button>
-              ) : (
-                <button
+                {content[step].buttonText ? (
+                  <GlowButton type="submit">
+                    {content[step].buttonText}
+                  </GlowButton>
+                ) : (
+                  <button
+                    type="submit"
+                    style={{ display: "none" }}
+                    aria-hidden="true"
+                  />
+                )}
+              </VStack>
+            </form>
+          ) : (
+            content[step].buttonText && (
+              <Center>
+                <GlowButton
                   type="submit"
-                  style={{ display: "none" }}
-                  aria-hidden="true"
-                />
-              )}
-            </VStack>
-          </form>
-        ) : (
-          content[step].buttonText && (
-            <Center>
-              <Button
-                rounded="full"
-                variant="subtle"
-                size="lg"
-                maxW="300px"
-                onClick={() =>
-                  setStep((prev) => (prev < content.length - 1 ? prev + 1 : 0))
-                }
-              >
-                {content[step].buttonText}
-              </Button>
-            </Center>
-          )
-        )}
-      </VStack>
+                  onClick={() =>
+                    setStep((prev) =>
+                      prev < content.length - 1 ? prev + 1 : 0
+                    )
+                  }
+                >
+                  {content[step].buttonText}
+                </GlowButton>
+              </Center>
+            )
+          )}
+        </VStack>
+      </SlideFade>
     </>
   );
 }
