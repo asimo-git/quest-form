@@ -4,5 +4,5 @@ export interface PageContent {
   solution?: string[];
   buttonText?: string;
   errorMessages?: string[];
-  helps?: string[];
+  hints?: string[];
 }
