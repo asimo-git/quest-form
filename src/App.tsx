@@ -76,7 +76,7 @@ function App() {
                 {stepData.image && (
                     <Box width="100%" display="flex" justifyContent="center">
                         <Image
-                            src={stepData.image}
+                            src={import.meta.env.BASE_URL + stepData.image}
                             maxWidth={{ base: "calc(100% - 32px)", md: "100%" }}
                             maxHeight="50vh"
                             width={{ base: "calc(100% - 32px)", md: "auto" }}
