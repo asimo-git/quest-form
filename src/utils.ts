@@ -2,7 +2,7 @@ import { LS_KEY } from "./constants";
 import type { PageContent } from "./interfaces";
 
 export async function loadQuestJSON(): Promise<PageContent[]> {
-    const res = await fetch("/quest.json");
+    const res = await fetch(import.meta.env.BASE_URL + "quest.json");
 
     if (!res.ok) {
         throw new Error(`Loading error: ${res.status} ${res.statusText}`);

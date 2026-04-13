@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
     plugins: [react(), tsconfigPaths()],
-    base: "/quest-form/",
-});
+    base: command === "build" ? "/quest-form/" : "/",
+}));
