@@ -7,99 +7,106 @@ import { QuestionIcon } from "./QuestionIcon";
 import { ScaleFade } from "@chakra-ui/transition";
 
 interface QuestFormProps {
-  stepData: PageContent;
-  onNext: () => void;
+    stepData: PageContent;
+    onNext: () => void;
 }
 
 export function QuestForm({ stepData, onNext }: QuestFormProps) {
-  const [inputError, setInputError] = useState<string | null>(null);
-  const [hintStep, setHintStep] = useState<number | null>(null);
+    const [inputError, setInputError] = useState<string | null>(null);
+    const [hintStep, setHintStep] = useState<number | null>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const normalizedAnswer =
-      formData.get("answer")?.toString().trim().toLowerCase() ?? "";
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const normalizedAnswer =
+            formData.get("answer")?.toString().trim().toLowerCase() ?? "";
 
-    if (!normalizedAnswer) {
-      setInputError(FORM_MESSAGES.emptyInput);
-      return;
-    }
+        if (!normalizedAnswer) {
+            setInputError(FORM_MESSAGES.emptyInput);
+            return;
+        }
 
-    const isCorrect = stepData.solution?.some(
-      (s) => s.trim().toLowerCase() === normalizedAnswer
-    );
-
-    if (isCorrect) {
-      e.currentTarget.reset();
-      setInputError(null);
-      onNext();
-    } else {
-      if (stepData.errorMessages && stepData.errorMessages.length > 0) {
-        const randomIndex = Math.floor(
-          Math.random() * stepData.errorMessages.length
+        const isCorrect = stepData.solution?.some(
+            (s) => s.trim().toLowerCase() === normalizedAnswer,
         );
-        setInputError(stepData.errorMessages[randomIndex]);
-      } else {
-        setInputError(FORM_MESSAGES.defaultIncorrectAnswer);
-      }
-    }
-  };
 
-  const handleHintClick = () => {
-    setHintStep((prev) => (prev === null ? 0 : prev + 1));
-  };
+        if (isCorrect) {
+            e.currentTarget.reset();
+            setInputError(null);
+            onNext();
+        } else {
+            if (stepData.errorMessages && stepData.errorMessages.length > 0) {
+                const randomIndex = Math.floor(
+                    Math.random() * stepData.errorMessages.length,
+                );
+                setInputError(stepData.errorMessages[randomIndex]);
+            } else {
+                setInputError(FORM_MESSAGES.defaultIncorrectAnswer);
+            }
+        }
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <VStack gap="4" align="center">
-        <Field.Root invalid={!!inputError} width="400px" maxWidth="95vw">
-          <Input
-            size="lg"
-            name="answer"
-            onChange={() => inputError && setInputError(null)}
-            placeholder={FORM_MESSAGES.inputPlaceholder}
-          />
-          <Field.ErrorText textStyle="lg" mx="auto">
-            {inputError}
-          </Field.ErrorText>
-        </Field.Root>
+    const handleHintClick = () => {
+        setHintStep((prev) => (prev === null ? 0 : prev + 1));
+    };
 
-        {stepData.buttonText ? (
-          <GlowButton type="submit">{stepData.buttonText}</GlowButton>
-        ) : (
-          <button
-            type="submit"
-            style={{ display: "none" }}
-            aria-hidden="true"
-          />
-        )}
+    return (
+        <form
+            onSubmit={handleSubmit}
+            style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+        >
+            <VStack gap="4" align="center" width="100%">
+                <Field.Root invalid={!!inputError} width="100%">
+                    <Input
+                        size="lg"
+                        name="answer"
+                        onChange={() => inputError && setInputError(null)}
+                        placeholder={FORM_MESSAGES.inputPlaceholder}
+                    />
+                    <Field.ErrorText textStyle="lg" mx="auto">
+                        {inputError}
+                    </Field.ErrorText>
+                </Field.Root>
 
-        {stepData.hints && (
-          <>
-            <VStack gap="px" align="center" color="var(--hint-color)">
-              <GlowButton
-                p="0"
-                onClick={handleHintClick}
-                disabled={hintStep === stepData.hints.length - 1}
-              >
-                <QuestionIcon />
-              </GlowButton>
-              {hintStep !== null &&
-                stepData.hints.slice(0, hintStep + 1).map((hint, index) => (
-                  <ScaleFade
-                    initialScale={0.9}
-                    key={index}
-                    in
-                    transition={{ enter: { duration: 0.8 } }}
-                  >
-                    <Text textStyle="xl">{hint}</Text>
-                  </ScaleFade>
-                ))}
+                <GlowButton type="submit">
+                    {stepData.buttonText ?? "Дальше"}
+                </GlowButton>
+
+                {stepData.hints && (
+                    <>
+                        <VStack
+                            gap="px"
+                            align="center"
+                            color="var(--hint-color)"
+                        >
+                            <GlowButton
+                                p="0"
+                                onClick={handleHintClick}
+                                disabled={
+                                    hintStep === stepData.hints.length - 1
+                                }
+                            >
+                                <QuestionIcon />
+                            </GlowButton>
+                            {hintStep !== null &&
+                                stepData.hints
+                                    .slice(0, hintStep + 1)
+                                    .map((hint, index) => (
+                                        <ScaleFade
+                                            initialScale={0.9}
+                                            key={index}
+                                            in
+                                            transition={{
+                                                enter: { duration: 0.8 },
+                                            }}
+                                        >
+                                            <Text textStyle="xl">{hint}</Text>
+                                        </ScaleFade>
+                                    ))}
+                        </VStack>
+                    </>
+                )}
             </VStack>
-          </>
-        )}
-      </VStack>
-    </form>
-  );
+        </form>
+    );
 }
