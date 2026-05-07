@@ -1,28 +1,39 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+    /* color: rgba(255, 255, 255, 0.87); */
+    color: #123d00;
+    background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-  --hint-color: #ff9c4a;
+    --hint-color: #ff9c4a;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  min-width: 320px;
-  min-height: 100vh;
-  background: url("/bg.jpg") no-repeat center center / cover;
+    margin: 0;
+    display: flex;
+    min-width: 320px;
+    min-height: 100vh;
+    /* background: url("/bg.jpg") no-repeat center center / cover; */
+
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+        url("/removebg.png") no-repeat top center / 300px,
+        #fec086b5;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+    font-size: 3.2em;
+    line-height: 1.1;
+}
+
+input {
+    background-color: #ffd39c92 !important;
+    border: 2px solid #402500 !important;
 }
